@@ -1,0 +1,119 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "JSON Recipe version 0.0.0",
+  "description": "A schema for recipes.",
+  "type": "object",
+  "definitions": {
+    "quantity": {
+      "oneOf": [
+        { "type": "integer" },
+        {
+          "description": "The quantity as a fractional string, such as \"1 1/3\".",
+          "type": "string",
+          "pattern": "^[1-9][0-9]*((/| [1-9][0-9]*/)[1-9][0-9]*)?$"
+        }
+      ]
+    }
+  },
+  "required": ["title", "ingredients", "directions"],
+  "properties": {
+    "meta": {
+      "description": "Meta information that does not relate directly to the recipe itself, such as the schema version used.",
+      "type": "object",
+      "properties": {
+        "schemaVersion": {
+          "description": "The version of this schema under which the recipe was written. The schema follows semantic versioning, so recipes written under version 1.2.3 will be compatible with schema version 1.4.5, but not necessarily the other way around.",
+          "type": "string",
+          "const": "0.0.0"
+        }
+      }
+    },
+    "title": {
+      "description": "The title of the recipe.",
+      "type": "string"
+    },
+    "source": {
+      "description": "The source of the recipe (e.g. the person who wrote it and the book where it was found).",
+      "type": "object",
+      "required": ["author"],
+      "properties": {
+        "author": {
+          "description": "The full name of the author of the recipe.",
+          "type": "string"
+        },
+        "location": {
+          "description": "The location from which the recipe was retrived (e.g. a website or a book).",
+          "type": "object",
+          "oneOf": [
+            {
+              "description": "A website or other source accessible online.",
+              "type": "object",
+              "properties": {
+                "url": {
+                  "description": "The URL of the source material.",
+                  "type": "string",
+                  "format": "uri"
+                },
+                "retrievalDate": {
+                  "description": "The date on which the recipe was retrieved from the source.",
+                  "type": "string",
+                  "format": "date"
+                }
+              },
+              "required": ["url"]
+            }
+          ]
+        }
+      }
+    },
+    "ingredients": {
+      "description": "The ingredients of the recipe.",
+      "type": "array",
+      "items": {
+        "oneOf": [
+          {
+            "description": "An ingredient listing as a string, in the format \"<quantity> <unit> <item>[, <preparation>]\".",
+            "type": "string",
+            "$comment": "TODO: figure out if this can be a more portable pattern.",
+            "format": "ingredientString"
+          },
+          {
+            "description": "An ingredient listing as an object.",
+            "type": "object",
+            "required": ["quantity", "unit", "item"],
+            "properties": {
+              "quantity": {
+                "description": "The quantity of the specified item, in terms of the specified unit.",
+                "allOf": [{ "$ref": "#/definitions/quantity" }]
+              },
+              "unit": {
+                "description": "The unit of measurement which the specified quantity uses (e.g. \"cup\").",
+                "type": "string",
+                "default": "each"
+              },
+              "item": {
+                "description": "The item of which this ingredient consists (e.g. \"apple\").",
+                "type": "string"
+              },
+              "preparation": {
+                "description": "How the ingredient should be prepared prior to use (e.g. \"chopped\").",
+                "anyOf": [
+                  { "type": "string" },
+                  { "type": "array", "items": { "type": "string" } }
+                ]
+              }
+            }
+          }
+        ]
+      }
+    },
+    "directions": {
+      "description": "The instructions for preparing the finished product from the ingredients.",
+      "type": "array",
+      "items": {
+        "description": "A single step in the preparation of the recipe.",
+        "type": "string"
+      }
+    }
+  }
+}
