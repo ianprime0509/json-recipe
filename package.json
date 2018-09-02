@@ -1,0 +1,35 @@
+{
+  "name": "json-recipe",
+  "version": "0.0.0",
+  "description": "A JSON format for culinary recipes.",
+  "main": "dist/index.js",
+  "scripts": {
+    "build": "tsc"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ianprime0509/json-recipe.git"
+  },
+  "keywords": [
+    "recipe",
+    "cooking",
+    "cuisine",
+    "json"
+  ],
+  "author": {
+    "name": "Ian Johnson",
+    "email": "ianprime0509@gmail.com"
+  },
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/ianprime0509/json-recipe/issues"
+  },
+  "homepage": "https://github.com/ianprime0509/json-recipe#readme",
+  "devDependencies": {
+    "tslint": "^5.11.0",
+    "typescript": "^3.0.3"
+  },
+  "dependencies": {
+    "ajv": "^6.5.3"
+  }
+}
