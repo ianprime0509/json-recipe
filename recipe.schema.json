@@ -13,6 +13,47 @@
           "pattern": "^[1-9][0-9]*((/| [1-9][0-9]*/)[1-9][0-9]*)?$"
         }
       ]
+    },
+    "ingredient": {
+      "oneOf": [
+        {
+          "description": "An ingredient listing as a string, in the format \"<quantity> <unit> <item>[, <preparation>]\".",
+          "type": "string",
+          "$comment": "TODO: figure out if this can be a more portable pattern.",
+          "format": "ingredientString"
+        },
+        {
+          "description": "An ingredient listing as an object.",
+          "type": "object",
+          "required": ["quantity", "unit", "item"],
+          "properties": {
+            "quantity": {
+              "description": "The quantity of the specified item, in terms of the specified unit.",
+              "allOf": [{ "$ref": "#/definitions/quantity" }]
+            },
+            "unit": {
+              "description": "The unit of measurement which the specified quantity uses (e.g. \"cup\").",
+              "type": "string",
+              "default": "each"
+            },
+            "item": {
+              "description": "The item of which this ingredient consists (e.g. \"apple\").",
+              "type": "string"
+            },
+            "preparation": {
+              "description": "How the ingredient should be prepared prior to use (e.g. \"chopped\").",
+              "anyOf": [
+                { "type": "string" },
+                { "type": "array", "items": { "type": "string" } }
+              ]
+            }
+          }
+        }
+      ]
+    },
+    "directionStep": {
+      "description": "A single step in the preparation of the recipe.",
+      "type": "string"
     }
   },
   "required": ["title", "ingredients", "directions"],
@@ -71,36 +112,20 @@
       "type": "array",
       "items": {
         "oneOf": [
+          { "$ref": "#/definitions/ingredient" },
           {
-            "description": "An ingredient listing as a string, in the format \"<quantity> <unit> <item>[, <preparation>]\".",
-            "type": "string",
-            "$comment": "TODO: figure out if this can be a more portable pattern.",
-            "format": "ingredientString"
-          },
-          {
-            "description": "An ingredient listing as an object.",
+            "description": "A group of ingredients under a single heading.",
             "type": "object",
-            "required": ["quantity", "unit", "item"],
+            "required": ["heading", "ingredients"],
             "properties": {
-              "quantity": {
-                "description": "The quantity of the specified item, in terms of the specified unit.",
-                "allOf": [{ "$ref": "#/definitions/quantity" }]
-              },
-              "unit": {
-                "description": "The unit of measurement which the specified quantity uses (e.g. \"cup\").",
-                "type": "string",
-                "default": "each"
-              },
-              "item": {
-                "description": "The item of which this ingredient consists (e.g. \"apple\").",
+              "heading": {
+                "description": "The heading for this group of ingredients.",
                 "type": "string"
               },
-              "preparation": {
-                "description": "How the ingredient should be prepared prior to use (e.g. \"chopped\").",
-                "anyOf": [
-                  { "type": "string" },
-                  { "type": "array", "items": { "type": "string" } }
-                ]
+              "ingredients": {
+                "description": "The ingredients under this heading.",
+                "type": "array",
+                "items": { "$ref": "#/definitions/ingredient" }
               }
             }
           }
@@ -111,8 +136,25 @@
       "description": "The instructions for preparing the finished product from the ingredients.",
       "type": "array",
       "items": {
-        "description": "A single step in the preparation of the recipe.",
-        "type": "string"
+        "oneOf": [
+          { "$ref": "#/definitions/directionStep" },
+          {
+            "description": "A group of directions under a single heading.",
+            "type": "object",
+            "required": ["heading", "directions"],
+            "properties": {
+              "heading": {
+                "description": "The heading for this group of directions.",
+                "type": "string"
+              },
+              "directions": {
+                "description": "The directions under this heading.",
+                "type": "array",
+                "items": { "$ref": "#/definitions/directionStep" }
+              }
+            }
+          }
+        ]
       }
     }
   }
