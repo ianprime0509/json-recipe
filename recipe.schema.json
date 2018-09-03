@@ -1,6 +1,6 @@
 {
   "$schema": "http://json-schema.org/draft-07/schema#",
-  "title": "JSON Recipe version 0.0.0",
+  "title": "JSON Recipe",
   "description": "A schema for recipes.",
   "type": "object",
   "definitions": {
@@ -17,7 +17,7 @@
     "ingredient": {
       "oneOf": [
         {
-          "description": "An ingredient listing as a string, in the format \"<quantity> <unit> <item>[, <preparation>]\".",
+          "description": "An ingredient listing as a string, in the format \"<quantity> <unit> <item>[, <preparation>]*\".",
           "type": "string",
           "$comment": "TODO: figure out if we can make a portable pattern for this."
         },
@@ -25,6 +25,7 @@
           "description": "An ingredient listing as an object.",
           "type": "object",
           "required": ["quantity", "unit", "item"],
+          "additionalProperties": false,
           "properties": {
             "quantity": {
               "description": "The quantity of the specified item, in terms of the specified unit.",
@@ -116,6 +117,7 @@
             "description": "A group of ingredients under a single heading.",
             "type": "object",
             "required": ["heading", "ingredients"],
+            "additionalProperties": false,
             "properties": {
               "heading": {
                 "description": "The heading for this group of ingredients.",
@@ -141,6 +143,7 @@
             "description": "A group of directions under a single heading.",
             "type": "object",
             "required": ["heading", "directions"],
+            "additionalProperties": false,
             "properties": {
               "heading": {
                 "description": "The heading for this group of directions.",

@@ -50,7 +50,7 @@ and
 Thus, in terms of the components of the object format, the string format is
 
 ```
-<quantity> <unit> <item>[, preparation]
+<quantity> <unit> <item>[, preparation]*
 ```
 
 Note that the unit `"each"` must be explicitly provided in the string format

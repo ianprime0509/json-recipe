@@ -33,4 +33,23 @@ describe('parse', () => {
       new Ingredient(new Fraction(15, 4), 'cups', 'warm water'),
     );
   });
+
+  it('parses preparation instructions', () => {
+    expect(Ingredient.parse('1 cup red onions, minced')).toEqual(
+      new Ingredient(1, 'cup', 'red onions', ['minced']),
+    );
+    expect(
+      Ingredient.parse('1 1/4 teaspoon red pepper, finely chopped'),
+    ).toEqual(
+      new Ingredient(new Fraction(5, 4), 'teaspoon', 'red pepper', [
+        'finely chopped',
+      ]),
+    );
+    expect(Ingredient.parse('1 2/3 cups potatoes, diced, peeled')).toEqual(
+      new Ingredient(new Fraction(5, 3), 'cups', 'potatoes', [
+        'diced',
+        'peeled',
+      ]),
+    );
+  });
 });

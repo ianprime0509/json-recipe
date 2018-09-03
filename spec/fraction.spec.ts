@@ -21,3 +21,14 @@ describe('fromMixedNumber', () => {
     );
   });
 });
+
+describe('toMixedNumber', () => {
+  it('correctly converts an improper fraction into a mixed number', () => {
+    expect(new Fraction(3, 4).toMixedNumber()).toEqual([0, new Fraction(3, 4)]);
+    expect(new Fraction(3, 2).toMixedNumber()).toEqual([1, new Fraction(1, 2)]);
+    expect(new Fraction(15, 4).toMixedNumber()).toEqual([
+      3,
+      new Fraction(3, 4),
+    ]);
+  });
+});

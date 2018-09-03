@@ -1,5 +1,6 @@
 import Ajv from 'ajv';
 import * as recipeSchema from '../recipe.schema.json';
+import { Ingredient as JsonIngredient, JsonRecipe } from './json-recipe';
 
 function gcd(m: number, n: number): number {
   return n === 0 ? m : gcd(n, m % n);
@@ -8,6 +9,8 @@ function gcd(m: number, n: number): number {
 /**
  * A rational number. This type is immutable; its numerator and denominator
  * cannot be changed except by making a new instance.
+ *
+ * TODO: figure out what to do about negative numbers.
  */
 export class Fraction {
   /**
@@ -26,8 +29,36 @@ export class Fraction {
     );
   }
 
-  private readonly _numerator: number;
-  private readonly _denominator: number;
+  public static parse(s: string): Fraction {
+    // Find the whole number part (if any).
+    const wholeNumberMatches = s.match(/^\s*([1-9][0-9]*)(?!\s*\/)/);
+    let wholeNumber = 0;
+    if (wholeNumberMatches) {
+      wholeNumber = parseInt(wholeNumberMatches[1], 10);
+      s = s.substring(wholeNumberMatches.index! + wholeNumberMatches[0].length);
+    }
+    // Find the fractional part (if any).
+    const fractionalMatches = s.match(/^\s*([1-9][0-9]*)\s*\/\s*([1-9][0-9]*)/);
+    let fractionalPart = new Fraction(0, 1);
+    if (fractionalMatches) {
+      fractionalPart = new Fraction(
+        parseInt(fractionalMatches[1], 10),
+        parseInt(fractionalMatches[2], 10),
+      );
+      s = s.substring(fractionalMatches.index! + fractionalMatches[0].length);
+    }
+
+    if (wholeNumber === 0 && fractionalPart.numerator === 0) {
+      throw new Error('No fractional number specified.');
+    }
+    if (s.trim().length !== 0) {
+      throw new Error(`Unexpected data at end of input: '${s}'`);
+    }
+    return Fraction.fromMixedNumber(wholeNumber, fractionalPart);
+  }
+
+  public readonly numerator: number;
+  public readonly denominator: number;
 
   /**
    * Constructs a new fraction. The fraction will be internally reduced to
@@ -45,16 +76,9 @@ export class Fraction {
       throw new Error('Cannot create a fraction with a denominator of zero.');
     }
     const d = gcd(numerator, denominator);
-    this._numerator = numerator / d;
-    this._denominator = denominator / d;
-  }
-
-  get numerator(): number {
-    return this._numerator;
-  }
-
-  get denominator(): number {
-    return this._denominator;
+    this.numerator = numerator / d;
+    this.denominator = denominator / d;
+    Object.freeze(this);
   }
 
   /**
@@ -99,10 +123,10 @@ export class Ingredient {
         wholeNumberMatches.index! + wholeNumberMatches[0].length,
       );
     }
+    // Find the fractional part (if any).
     const fractionalMatches = description.match(
       /^\s*([1-9][0-9]*)\s*\/\s*([1-9][0-9]*)/,
     );
-    // Find the fractional part (if any).
     let fractionalPart = new Fraction(0, 1);
     if (fractionalMatches) {
       fractionalPart = new Fraction(
@@ -124,7 +148,7 @@ export class Ingredient {
     if (!unitMatches) {
       throw new Error('Unit not specified.');
     }
-    const unit = unitMatches[1];
+    const unit = unitMatches[1].trim();
     description = description.substring(
       unitMatches.index! + unitMatches[0].length,
     );
@@ -134,16 +158,16 @@ export class Ingredient {
     if (!itemMatches) {
       throw new Error('Item not specified.');
     }
-    const item = itemMatches[1];
+    const item = itemMatches[1].trim();
     description = description.substring(
       itemMatches.index! + itemMatches[0].length,
     );
 
     // Find the preparation instructions, if any.
-    let preparation: string[] = [];
-    const preparationMatches = description.match(/^\s*(?:,\s*([^\s,]))+/);
-    if (preparationMatches) {
-      preparation = preparationMatches.slice(1);
+    const preparation: string[] = [];
+    let preparationMatches: RegExpMatchArray | null;
+    while ((preparationMatches = description.match(/^\s*,\s*([^,]+)/))) {
+      preparation.push(preparationMatches[1].trim());
       description = description.substring(
         preparationMatches.index! + preparationMatches[0].length,
       );
@@ -217,6 +241,16 @@ export interface DirectionGroup {
  * A complete recipe.
  */
 export class Recipe {
+  /**
+   * Determines whether the given JSON data represents a valid recipe according
+   * to the schema.
+   *
+   * @param data the data to validate
+   */
+  public static isValid(data: any): data is JsonRecipe {
+    return Recipe.validate(data) as boolean;
+  }
+
   private static ajv = new Ajv();
   private static validate = Recipe.ajv.compile(recipeSchema);
 
@@ -232,15 +266,50 @@ export class Recipe {
    *
    * @param data the JSON recipe data
    */
-  constructor(data: {}) {
-    if (!Recipe.validate(data)) {
+  constructor(data: any) {
+    if (!Recipe.isValid(data)) {
       throw new Error(
         `Given data does not validate according to the schema: ${JSON.stringify(
           Recipe.validate.errors,
         )}`,
       );
     }
-    // TODO: fill this implementation in.
-    this.ingredients = [];
+
+    // Parse the ingredients.
+    const parseIngredient = (ingData: JsonIngredient) => {
+      if (typeof ingData === 'string') {
+        return Ingredient.parse(ingData);
+      } else {
+        const quantity =
+          typeof ingData.quantity === 'string'
+            ? Fraction.parse(ingData.quantity)
+            : new Fraction(ingData.quantity);
+        const preparation =
+          typeof ingData.preparation === 'string'
+            ? [ingData.preparation]
+            : ingData.preparation;
+        return new Ingredient(
+          quantity,
+          ingData.unit,
+          ingData.item,
+          preparation,
+        );
+      }
+    };
+    const parseIngredientOrGroup = (
+      ingData:
+        | JsonIngredient
+        | { heading: string; ingredients: JsonIngredient[] },
+    ) => {
+      if (typeof ingData === 'object' && 'heading' in ingData) {
+        return {
+          heading: ingData.heading,
+          ingredients: ingData.ingredients.map(parseIngredient),
+        };
+      } else {
+        return parseIngredient(ingData);
+      }
+    };
+    this.ingredients = data.ingredients.map(parseIngredientOrGroup);
   }
 }
