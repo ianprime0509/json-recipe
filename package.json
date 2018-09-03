@@ -4,7 +4,8 @@
   "description": "A JSON format for culinary recipes.",
   "main": "dist/index.js",
   "scripts": {
-    "build": "tsc"
+    "build": "tsc",
+    "test": "jasmine"
   },
   "repository": {
     "type": "git",
@@ -26,6 +27,9 @@
   },
   "homepage": "https://github.com/ianprime0509/json-recipe#readme",
   "devDependencies": {
+    "@types/jasmine": "^2.8.8",
+    "jasmine": "^3.2.0",
+    "ts-node": "^7.0.1",
     "tslint": "^5.11.0",
     "typescript": "^3.0.3"
   },

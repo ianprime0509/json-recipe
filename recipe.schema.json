@@ -19,8 +19,7 @@
         {
           "description": "An ingredient listing as a string, in the format \"<quantity> <unit> <item>[, <preparation>]\".",
           "type": "string",
-          "$comment": "TODO: figure out if this can be a more portable pattern.",
-          "format": "ingredientString"
+          "$comment": "TODO: figure out if we can make a portable pattern for this."
         },
         {
           "description": "An ingredient listing as an object.",
