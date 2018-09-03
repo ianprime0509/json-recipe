@@ -3,6 +3,7 @@
   "version": "0.0.0",
   "description": "A JSON format for culinary recipes.",
   "main": "dist/index.js",
+  "types": "dist/index.d.ts",
   "scripts": {
     "build": "gulp build",
     "test": "gulp test"
@@ -27,7 +28,10 @@
   },
   "homepage": "https://github.com/ianprime0509/json-recipe#readme",
   "devDependencies": {
+    "@types/gulp": "^4.0.5",
+    "@types/gulp-jasmine": "^2.4.0",
     "@types/jasmine": "^2.8.8",
+    "@types/through2": "^2.0.33",
     "gulp": "^3.9.1",
     "gulp-jasmine": "^4.0.0",
     "gulp-typescript": "^5.0.0-alpha.3",
