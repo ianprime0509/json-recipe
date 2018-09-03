@@ -1,4 +1,5 @@
-import { Fraction, Ingredient } from '../lib/index';
+import { Fraction } from '../lib/fraction';
+import { Ingredient } from '../lib/ingredient';
 
 describe('parse', () => {
   it('parses ingredients with whole-number quantities', () => {

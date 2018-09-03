@@ -1,4 +1,4 @@
-import { Fraction } from '../lib/index';
+import { Fraction } from '../lib/fraction';
 
 describe('constructor', () => {
   it('constructs a fraction in lowest terms', () => {
