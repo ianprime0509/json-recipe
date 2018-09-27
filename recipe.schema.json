@@ -4,6 +4,39 @@
   "description": "A schema for recipes.",
   "type": "object",
   "definitions": {
+    "source": {
+      "description": "The source of the recipe (e.g. the person who wrote it and the book where it was found).",
+      "type": "object",
+      "required": ["author"],
+      "properties": {
+        "author": {
+          "description": "The full name of the author of the recipe.",
+          "type": "string"
+        },
+        "location": {
+          "description": "The location from which the recipe was retrived (e.g. a website or a book).",
+          "type": "object",
+          "oneOf": [{ "$ref": "#/definitions/webLocation" }]
+        }
+      }
+    },
+    "webLocation": {
+      "description": "A website or other source accessible online.",
+      "type": "object",
+      "properties": {
+        "url": {
+          "description": "The URL of the source material.",
+          "type": "string",
+          "format": "uri"
+        },
+        "retrievalDate": {
+          "description": "The date on which the recipe was retrieved from the source.",
+          "type": "string",
+          "format": "date"
+        }
+      },
+      "required": ["url"]
+    },
     "quantity": {
       "oneOf": [
         { "type": "integer" },
@@ -24,7 +57,7 @@
         {
           "description": "An ingredient listing as an object.",
           "type": "object",
-          "required": ["quantity", "unit", "item"],
+          "required": ["quantity", "item"],
           "additionalProperties": false,
           "properties": {
             "quantity": {
@@ -51,6 +84,23 @@
         }
       ]
     },
+    "ingredientGroup": {
+      "description": "A group of ingredients under a single heading.",
+      "type": "object",
+      "required": ["heading", "ingredients"],
+      "additionalProperties": false,
+      "properties": {
+        "heading": {
+          "description": "The heading for this group of ingredients.",
+          "type": "string"
+        },
+        "ingredients": {
+          "description": "The ingredients under this heading.",
+          "type": "array",
+          "items": { "$ref": "#/definitions/ingredient" }
+        }
+      }
+    },
     "directionStep": {
       "description": "A single step in the preparation of the recipe.",
       "type": "string"
@@ -73,63 +123,14 @@
       "description": "The title of the recipe.",
       "type": "string"
     },
-    "source": {
-      "description": "The source of the recipe (e.g. the person who wrote it and the book where it was found).",
-      "type": "object",
-      "required": ["author"],
-      "properties": {
-        "author": {
-          "description": "The full name of the author of the recipe.",
-          "type": "string"
-        },
-        "location": {
-          "description": "The location from which the recipe was retrived (e.g. a website or a book).",
-          "type": "object",
-          "oneOf": [
-            {
-              "description": "A website or other source accessible online.",
-              "type": "object",
-              "properties": {
-                "url": {
-                  "description": "The URL of the source material.",
-                  "type": "string",
-                  "format": "uri"
-                },
-                "retrievalDate": {
-                  "description": "The date on which the recipe was retrieved from the source.",
-                  "type": "string",
-                  "format": "date"
-                }
-              },
-              "required": ["url"]
-            }
-          ]
-        }
-      }
-    },
+    "source": { "$ref": "#/definitions/source" },
     "ingredients": {
       "description": "The ingredients of the recipe.",
       "type": "array",
       "items": {
         "oneOf": [
           { "$ref": "#/definitions/ingredient" },
-          {
-            "description": "A group of ingredients under a single heading.",
-            "type": "object",
-            "required": ["heading", "ingredients"],
-            "additionalProperties": false,
-            "properties": {
-              "heading": {
-                "description": "The heading for this group of ingredients.",
-                "type": "string"
-              },
-              "ingredients": {
-                "description": "The ingredients under this heading.",
-                "type": "array",
-                "items": { "$ref": "#/definitions/ingredient" }
-              }
-            }
-          }
+          { "$ref": "#/definitions/ingredientGroup" }
         ]
       }
     },

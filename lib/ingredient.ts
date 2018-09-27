@@ -5,6 +5,7 @@
  * @license MIT
  */
 import { Fraction } from './fraction';
+import * as schemaTypes from './schema-types';
 
 /**
  * A single ingredient in a recipe.
@@ -90,6 +91,34 @@ export class Ingredient {
   }
 
   /**
+   * Parses an ingredient from a schema object, which may either be a string in
+   * the human-readable format described in {@link Ingredient#parse} or an
+   * object with the keys `quantity` and `item` (and optionally `unit` and
+   * `preparation`).
+   *
+   * If the object does not contain the `unit` property, the default unit is
+   * 'each'.
+   *
+   * @param obj the schema object to parse
+   */
+  public static parseSchemaObject(obj: schemaTypes.Ingredient): Ingredient {
+    if (typeof obj === 'string') {
+      return Ingredient.parse(obj);
+    } else {
+      const quantity =
+        typeof obj.quantity === 'string'
+          ? Fraction.parse(obj.quantity)
+          : new Fraction(obj.quantity);
+      const unit = obj.unit || 'each';
+      const preparation =
+        typeof obj.preparation === 'string'
+          ? [obj.preparation]
+          : obj.preparation;
+      return new Ingredient(quantity, unit, obj.item, preparation);
+    }
+  }
+
+  /**
    * The quantity of the ingredient, relative to the unit.
    */
   public quantity: Fraction;
@@ -134,4 +163,23 @@ export interface IngredientGroup {
    * The ingredients contained in the group.
    */
   ingredients: Ingredient[];
+}
+
+/**
+ * Parses a schema object which may be either a single ingredient or an
+ * ingredient group.
+ *
+ * @param obj the object to parse
+ */
+export function parseIngredientOrGroup(
+  obj: schemaTypes.Ingredient | schemaTypes.IngredientGroup,
+): Ingredient | IngredientGroup {
+  if (typeof obj === 'object' && 'heading' in obj) {
+    return {
+      heading: obj.heading,
+      ingredients: obj.ingredients.map(Ingredient.parseSchemaObject),
+    };
+  } else {
+    return Ingredient.parseSchemaObject(obj);
+  }
 }

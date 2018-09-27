@@ -9,7 +9,11 @@ import Ajv from 'ajv';
 import * as schema from '../recipe.schema.json';
 import { Direction, DirectionGroup } from './direction';
 import { Fraction } from './fraction';
-import { Ingredient, IngredientGroup } from './ingredient';
+import {
+  Ingredient,
+  IngredientGroup,
+  parseIngredientOrGroup,
+} from './ingredient';
 import * as schemaTypes from './schema-types';
 
 /**
@@ -29,6 +33,10 @@ export class Recipe {
   private static ajv = new Ajv();
   private static validate = Recipe.ajv.compile(schema);
 
+  /**
+   * The title of the recipe.
+   */
+  public title: string;
   /**
    * The recipe's ingredients.
    */
@@ -54,43 +62,8 @@ export class Recipe {
       );
     }
 
-    // Parse the ingredients.
-    const parseIngredient = (ingData: schemaTypes.Ingredient) => {
-      if (typeof ingData === 'string') {
-        return Ingredient.parse(ingData);
-      } else {
-        const quantity =
-          typeof ingData.quantity === 'string'
-            ? Fraction.parse(ingData.quantity)
-            : new Fraction(ingData.quantity);
-        const preparation =
-          typeof ingData.preparation === 'string'
-            ? [ingData.preparation]
-            : ingData.preparation;
-        return new Ingredient(
-          quantity,
-          ingData.unit,
-          ingData.item,
-          preparation,
-        );
-      }
-    };
-    const parseIngredientOrGroup = (
-      ingData:
-        | schemaTypes.Ingredient
-        | { heading: string; ingredients: schemaTypes.Ingredient[] },
-    ) => {
-      if (typeof ingData === 'object' && 'heading' in ingData) {
-        return {
-          heading: ingData.heading,
-          ingredients: ingData.ingredients.map(parseIngredient),
-        };
-      } else {
-        return parseIngredient(ingData);
-      }
-    };
+    this.title = data.title;
     this.ingredients = data.ingredients.map(parseIngredientOrGroup);
-
     this.directions = data.directions;
   }
 }
