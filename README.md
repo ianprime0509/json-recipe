@@ -1,5 +1,9 @@
 # JSON recipe format
 
+NOTE: this repository will probably disappear soon, to be replaced with a
+more modular configuration (schema in one repository, tools in another,
+etc.).
+
 This project intends to provide a standard way to store (culinary) recipe
 information in JSON format. Its (admittedly ambitious) goal is to be simple
 enough for quick creation of recipes yet expansive and precise enough to
