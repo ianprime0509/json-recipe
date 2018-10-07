@@ -4,8 +4,12 @@
  * @copyright 2018 Ian Johnson
  * @license MIT
  */
+import {
+  Ingredient as SchemaIngredient,
+  IngredientGroup as SchemaIngredientGroup,
+} from 'jsonrecipe-schema';
+
 import { Fraction } from './fraction';
-import * as schemaTypes from './schema-types';
 
 /**
  * A single ingredient in a recipe.
@@ -101,7 +105,7 @@ export class Ingredient {
    *
    * @param obj the schema object to parse
    */
-  public static parseSchemaObject(obj: schemaTypes.Ingredient): Ingredient {
+  public static parseSchemaObject(obj: SchemaIngredient): Ingredient {
     if (typeof obj === 'string') {
       return Ingredient.parse(obj);
     } else {
@@ -172,7 +176,7 @@ export interface IngredientGroup {
  * @param obj the object to parse
  */
 export function parseIngredientOrGroup(
-  obj: schemaTypes.Ingredient | schemaTypes.IngredientGroup,
+  obj: SchemaIngredient | SchemaIngredientGroup,
 ): Ingredient | IngredientGroup {
   if (typeof obj === 'object' && 'heading' in obj) {
     return {
