@@ -1,5 +1,5 @@
 {
-  "name": "json-recipe",
+  "name": "jsonrecipe",
   "version": "0.0.0",
   "description": "A JSON format for culinary recipes.",
   "main": "dist/index.js",
@@ -10,7 +10,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/ianprime0509/json-recipe.git"
+    "url": "git+https://github.com/ianprime0509/jsonrecipe-js.git"
   },
   "keywords": [
     "recipe",
@@ -24,9 +24,9 @@
   },
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/ianprime0509/json-recipe/issues"
+    "url": "https://github.com/ianprime0509/jsonrecipe-js/issues"
   },
-  "homepage": "https://github.com/ianprime0509/json-recipe#readme",
+  "homepage": "https://github.com/ianprime0509/jsonrecipe-js#readme",
   "devDependencies": {
     "@types/gulp": "^4.0.5",
     "@types/gulp-jasmine": "^2.4.0",
