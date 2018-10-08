@@ -5,8 +5,12 @@
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "scripts": {
-    "build": "gulp build",
-    "test": "gulp test"
+    "build": "tsc -p tsconfig.lib.json",
+    "check-style": "prettier -l lib/**/*.ts",
+    "lint": "tslint -p tsconfig.lib.json",
+    "prepare": "run-s build",
+    "run-tests": "mocha -r ts-node/register lib/**/*.spec.ts",
+    "test": "run-s check-style lint run-tests"
   },
   "repository": {
     "type": "git",
@@ -28,19 +32,17 @@
   },
   "homepage": "https://github.com/ianprime0509/jsonrecipe-js#readme",
   "devDependencies": {
-    "@types/gulp": "^4.0.5",
-    "@types/gulp-jasmine": "^2.4.0",
-    "@types/jasmine": "^2.8.8",
-    "@types/through2": "^2.0.33",
-    "gulp": "^3.9.1",
-    "gulp-jasmine": "^4.0.0",
-    "gulp-typescript": "^5.0.0-alpha.3",
-    "jasmine": "^3.2.0",
+    "@types/chai": "^4.1.6",
+    "@types/mocha": "^5.2.5",
+    "chai": "^4.2.0",
+    "mocha": "^5.2.0",
+    "prettier": "^1.14.3",
     "ts-node": "^7.0.1",
     "tslint": "^5.11.0",
     "typescript": "^3.0.3"
   },
   "dependencies": {
-    "jsonrecipe-schema": "0.0.1"
+    "jsonrecipe-schema": "0.0.1",
+    "npm-run-all": "^4.1.3"
   }
 }
