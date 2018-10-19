@@ -43,6 +43,6 @@
     "typescript": "^3.0.3"
   },
   "dependencies": {
-    "jsonrecipe-schema": "0.0.1"
+    "jsonrecipe-schema": "0.0.2"
   }
 }

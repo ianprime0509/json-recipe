@@ -6,7 +6,7 @@
  */
 import { validate } from 'jsonrecipe-schema';
 
-import { Direction, DirectionGroup } from './direction';
+import { Direction, DirectionGroup, parseDirectionOrGroup } from './direction';
 import {
   Ingredient,
   IngredientGroup,
@@ -49,6 +49,6 @@ export class Recipe {
 
     this.title = data.title;
     this.ingredients = data.ingredients.map(parseIngredientOrGroup);
-    this.directions = data.directions;
+    this.directions = data.directions.map(parseDirectionOrGroup);
   }
 }
