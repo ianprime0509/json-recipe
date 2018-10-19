@@ -1,7 +1,7 @@
 {
   "name": "jsonrecipe",
-  "version": "0.0.0",
-  "description": "A JSON format for culinary recipes.",
+  "version": "0.0.1",
+  "description": "A convenient TypeScript/JavaScript API for working with JSON Recipe data.",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "scripts": {
