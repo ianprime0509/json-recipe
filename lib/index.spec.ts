@@ -10,6 +10,7 @@ import 'mocha';
 import { Direction, Fraction, Ingredient, Recipe, Source } from './index';
 
 import germanPotatoSalad from 'jsonrecipe-schema/examples/valid/german-potato-salad.json';
+import empty from 'jsonrecipe-schema/examples/invalid/empty.json';
 
 describe('Recipe', () => {
   describe('constructor', () => {
@@ -48,6 +49,10 @@ describe('Recipe', () => {
       );
 
       expect(Recipe.parse(germanPotatoSalad)).to.deep.equal(expected);
+    });
+
+    it('throws an exception when given invalid recipe data', () => {
+      expect(() => Recipe.parse(empty)).to.throw('validate');
     });
   });
 });
