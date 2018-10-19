@@ -9,8 +9,8 @@ import 'mocha';
 
 import { Direction, Fraction, Ingredient, Recipe, Source } from './index';
 
-import germanPotatoSalad from 'jsonrecipe-schema/examples/valid/german-potato-salad.json';
 import empty from 'jsonrecipe-schema/examples/invalid/empty.json';
+import germanPotatoSalad from 'jsonrecipe-schema/examples/valid/german-potato-salad.json';
 
 describe('Recipe', () => {
   describe('constructor', () => {
