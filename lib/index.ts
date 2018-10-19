@@ -7,29 +7,28 @@
 import { validate } from 'jsonrecipe-schema';
 
 import { Direction, DirectionGroup, parseDirectionOrGroup } from './direction';
+import { Fraction } from './fraction';
 import {
   Ingredient,
   IngredientGroup,
   parseIngredientOrGroup,
 } from './ingredient';
+import { Source, WebLocation } from './source';
+
+export {
+  Direction,
+  DirectionGroup,
+  Fraction,
+  Ingredient,
+  IngredientGroup,
+  Source,
+  WebLocation,
+};
 
 /**
  * A complete recipe.
  */
 export class Recipe {
-  /**
-   * The title of the recipe.
-   */
-  public title: string;
-  /**
-   * The recipe's ingredients.
-   */
-  public ingredients: Array<Ingredient | IngredientGroup>;
-  /**
-   * The recipe's directions.
-   */
-  public directions: Array<Direction | DirectionGroup>;
-
   /**
    * Constructs a new recipe from the given JSON data. The data must be valid
    * according to the recipe schema version corresponding to the version of
@@ -37,7 +36,7 @@ export class Recipe {
    *
    * @param data the JSON recipe data
    */
-  constructor(data: any) {
+  public static parse(data: any): Recipe {
     const errors = validate(data);
     if (errors.length !== 0) {
       throw new Error(
@@ -47,8 +46,40 @@ export class Recipe {
       );
     }
 
-    this.title = data.title;
-    this.ingredients = data.ingredients.map(parseIngredientOrGroup);
-    this.directions = data.directions.map(parseDirectionOrGroup);
+    return new Recipe(
+      data.title,
+      Source.parseSchemaObject(data.source),
+      data.ingredients.map(parseIngredientOrGroup),
+      data.directions.map(parseDirectionOrGroup),
+    );
+  }
+
+  /**
+   * The title of the recipe.
+   */
+  public title: string;
+  /**
+   * The origin of the recipe, including information about its author.
+   */
+  public source: Source;
+  /**
+   * The recipe's ingredients.
+   */
+  public ingredients: Array<Ingredient | IngredientGroup>;
+  /**
+   * The recipe's directions.
+   */
+  public directions: Array<Direction | DirectionGroup>;
+
+  constructor(
+    title: string,
+    source: Source,
+    ingredients: Array<Ingredient | IngredientGroup>,
+    directions: Array<Direction | DirectionGroup>,
+  ) {
+    this.title = title;
+    this.source = source;
+    this.ingredients = ingredients;
+    this.directions = directions;
   }
 }

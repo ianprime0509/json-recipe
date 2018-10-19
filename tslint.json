@@ -4,6 +4,7 @@
   "jsRules": {},
   "rules": {
     "interface-name": false,
+    "max-line-length": false,
     "no-conditional-assignment": false,
     "quotemark": [true, "single", "avoid-escape"],
     "variable-name": [

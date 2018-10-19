@@ -17,7 +17,7 @@ export interface WebLocation {
   /**
    * The date on which information was most recently retrieved from the URL.
    */
-  retrievalDate?: Date;
+  retrievalDate?: string;
 }
 
 /**
@@ -33,9 +33,7 @@ export class Source {
   public static parseSchemaObject(obj: schema.Source): Source {
     const location: WebLocation | undefined = obj.location
       ? {
-          retrievalDate: obj.location.retrievalDate
-            ? new Date(Date.parse(obj.location.retrievalDate))
-            : undefined,
+          retrievalDate: obj.location.retrievalDate,
           url: obj.location.url,
         }
       : undefined;
