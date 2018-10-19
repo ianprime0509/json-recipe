@@ -4,7 +4,7 @@
  * @copyright 2018 Ian Johnson
  * @license MIT
  */
-import { Source as SchemaSource } from 'jsonrecipe-schema';
+import * as schema from 'jsonrecipe-schema';
 
 /**
  * The location of a resource accessible on the web.
@@ -30,7 +30,7 @@ export class Source {
    *
    * @param obj the schema object to parse
    */
-  public static parseSchemaObject(obj: SchemaSource): Source {
+  public static parseSchemaObject(obj: schema.Source): Source {
     const location: WebLocation | undefined = obj.location
       ? {
           retrievalDate: obj.location.retrievalDate
